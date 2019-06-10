@@ -1,0 +1,78 @@
+from flask import Flask, request, jsonify, render_template
+import datetime
+import json
+
+app = Flask(__name__)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+gateway_msg = None
+sensor_msg = None
+
+
+def read_csv(id: str):
+    import csv
+    fn = id + ".csv"
+    messages = csv.DictReader(open(fn), delimiter=';')
+    return list(messages)
+
+
+def write_csv(data, type, id):
+    import csv
+    import os.path
+
+    sensors = data.get(type, [])
+    if not isinstance(sensors, list):
+        sensors = [sensors]
+    for sensor in sensors:
+        fn = sensor[id] + ".csv"
+        isFile = os.path.isfile(fn)
+        print (fn, isFile)
+        with open(fn, 'a', newline='') as csvfile:
+            fieldnames = sensor.keys()
+            writer = csv.DictWriter(csvfile, delimiter=';',
+                                    fieldnames=fieldnames)
+
+            if not isFile:
+                writer.writeheader()
+            writer.writerow(sensor)
+
+
+@app.route('/post', methods=['POST', 'GET'])
+def post():
+    global gateway_msg, sensor_msg
+    payload = request.json
+    if 'gatewayMessage' in payload:
+        gateway_msg = payload.get('gatewayMessage')
+    if 'sensorMessages' in payload:    
+        sensor_msg = payload.get('sensorMessages')
+    write_csv(payload, 'sensorMessages', 'sensorID')
+    write_csv(payload, 'gatewayMessage', 'gatewayID')        
+    return jsonify(payload)
+
+
+@app.route('/msgs', methods=['GET'])
+def msgs():
+    global gateway_msg, sensor_msg
+    #out = "<h1>Welome to Miranda Remote Monitoring Solution!</h1>" \
+    #      "<br>Received Data:<br>"
+    readings = read_csv('941178')
+    out = jsonify(readings)
+    return out
+
+
+@app.route('/sensor', methods=['GET'])
+def sensor():
+    global gateway_msg, sensor_msg
+    # out = jsonify(sensor_msg)
+    readings = read_csv('488187')
+    return jsonify(readings)
+    # return render_template(
+    #    'sensor.html',
+    #    response=json.dumps(sensor_msg, indent=4),
+    #    date=datetime.datetime.now()
+    # )
+
+
+@app.route("/")
+def hello():
+    return "<h1>Welome to Miranda Remote Monitoring Solution!<br>" \
+           "<br>Coming Soon!<h1>"
