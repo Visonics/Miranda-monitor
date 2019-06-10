@@ -12,7 +12,7 @@ def read_csv(id: str):
     import csv
     fn = id + ".csv"
     messages = csv.DictReader(open(fn), delimiter=';')
-    return list(messages)
+    return list(messages or [])
 
 
 def write_csv(data, type, id):
@@ -49,21 +49,18 @@ def post():
     return jsonify(payload)
 
 
-@app.route('/msgs', methods=['GET'])
-def msgs():
+@app.route('/gateway/<gateway_id>', methods=['GET'])
+def gateway(gateway_id):
     global gateway_msg, sensor_msg
-    #out = "<h1>Welome to Miranda Remote Monitoring Solution!</h1>" \
-    #      "<br>Received Data:<br>"
-    readings = read_csv('941178')
+    readings = read_csv(gateway_id)
     out = jsonify(readings)
     return out
 
 
-@app.route('/sensor', methods=['GET'])
-def sensor():
+@app.route('/sensor/<sensor_id>', methods=['GET'])
+def sensor(sensor_id):
     global gateway_msg, sensor_msg
-    # out = jsonify(sensor_msg)
-    readings = read_csv('488187')
+    readings = read_csv(sensor_id)
     return jsonify(readings)
     # return render_template(
     #    'sensor.html',
