@@ -61,6 +61,7 @@ def gateway(gateway_id):
 def sensor(sensor_id):
     global gateway_msg, sensor_msg
     readings = read_csv(sensor_id)
+    print(sensor_id, readings[0])
     return jsonify(readings)
     # return render_template(
     #    'sensor.html',
