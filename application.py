@@ -73,4 +73,4 @@ def sensor(sensor_id):
 @app.route("/")
 def hello():
     return "<h1>Welome to Miranda Remote Monitoring Solution!<br>" \
-           "<br>Coming Soon!<h1>"
+           "<br>Version 0.1.0<h1>"
