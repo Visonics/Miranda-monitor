@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 import datetime
 import json
+from bewhere import Bewhere
+from monnit import Monnit
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
@@ -63,14 +65,27 @@ def sensor(sensor_id):
     readings = read_csv(sensor_id)
     print(sensor_id, readings[0])
     return jsonify(readings)
-    # return render_template(
-    #    'sensor.html',
-    #    response=json.dumps(sensor_msg, indent=4),
-    #    date=datetime.datetime.now()
-    # )
+
+
+@app.route('/sensor/monnit', methods=['GET'])
+def get_monnit():
+    api = Monnit("admin@mirandasolutionsgroup.com", "M0nn1tS3ns0rs")
+    api.authentication()
+    readings = api.snapshots()
+    return jsonify(readings)
+
+
+@app.route('/sensor/bewhere', methods=['GET'])
+def get_bewhere():
+    api = Bewhere("bwadmin@mirandasolutionsgroup.com", "Stellula2018",
+                  "3y8uBuEOrS")
+
+    api.authentication()
+    readings = api.snapshots()
+    return jsonify(readings)
 
 
 @app.route("/")
 def hello():
     return "<h1>Welome to Miranda Remote Monitoring Solution!<br>" \
-           "<br>Version 0.1.0<h1>"
+           "<br>Version 0.2.0<h1>"
