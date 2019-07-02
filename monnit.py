@@ -23,8 +23,44 @@ class Monnit:
         print(url)
         print(self.token)
 
+    def appids(self):
+        poll_url = self.baseURL + "/GetApplicationID/"
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
+
     def snapshots(self):
         poll_url = self.baseURL + "/SensorList/" + self.token
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
+
+    def sensor_data(self, id):
+        poll_url = self.baseURL + "/SensorDataMessages/" + self.token + "?" +\
+                   "sensorID=" + str(id) + "&fromDate=2019/06/29 6:22:14 PM&" \
+                                           "toDate=2019/07/02 6:22:14PM"
+        response = requests.get(poll_url)
+        data = None
+        print(response.status_code, response.reason)
+        if response.status_code == 200:
+            data = response.json().get("Result")
+            print(json.dumps(data, indent=4))
+        return data
+
+    def networks(self):
+        poll_url = self.baseURL + "/NetworkList/" + self.token
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
+
+    def gateways(self):
+        poll_url = self.baseURL + "/GatewayList/" + self.token
         response = requests.get(poll_url)
 
         data = response.json().get("Result")
@@ -125,3 +161,7 @@ if __name__ == '__main__':
     api.authentication()
     data = api.snapshots()
     print(len(data))
+
+    api.networks()
+    api.gateways()
+    api.sensor_data(488187)

@@ -59,7 +59,7 @@ def gateway(gateway_id):
     return out
 
 
-@app.route('/sensor/<sensor_id>', methods=['GET'])
+@app.route('/sensors/<sensor_id>', methods=['GET'])
 def sensor(sensor_id):
     global gateway_msg, sensor_msg
     readings = read_csv(sensor_id)
@@ -67,7 +67,7 @@ def sensor(sensor_id):
     return jsonify(readings)
 
 
-@app.route('/sensor/monnit', methods=['GET'])
+@app.route('/sensors/monnit', methods=['GET'])
 def get_monnit():
     api = Monnit("admin@mirandasolutionsgroup.com", "M0nn1tS3ns0rs")
     api.authentication()
@@ -75,7 +75,15 @@ def get_monnit():
     return jsonify(readings)
 
 
-@app.route('/sensor/bewhere', methods=['GET'])
+@app.route('/gateways/monnit', methods=['GET'])
+def get_monnit():
+    api = Monnit("admin@mirandasolutionsgroup.com", "M0nn1tS3ns0rs")
+    api.authentication()
+    readings = api.gateways()
+    return jsonify(readings)
+
+
+@app.route('/sensors/bewhere', methods=['GET'])
 def get_bewhere():
     api = Bewhere("bwadmin@mirandasolutionsgroup.com", "Stellula2018",
                   "3y8uBuEOrS")
@@ -88,4 +96,4 @@ def get_bewhere():
 @app.route("/")
 def hello():
     return "<h1>Welome to Miranda Remote Monitoring Solution!<br>" \
-           "<br>Version 0.2.0<h1>"
+           "<br>Version 0.2.1<h1>"
