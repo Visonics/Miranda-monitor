@@ -76,7 +76,7 @@ def get_monnit():
 
 
 @app.route('/gateways/monnit', methods=['GET'])
-def get_monnit():
+def get_monnit_gateways():
     api = Monnit("admin@mirandasolutionsgroup.com", "M0nn1tS3ns0rs")
     api.authentication()
     readings = api.gateways()
