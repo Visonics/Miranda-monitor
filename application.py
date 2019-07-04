@@ -79,6 +79,7 @@ def bewhere_auth():
     api.authentication()
     return api
 
+
 @app.route('/sensors/monnit', methods=['GET'])
 def get_monnit():
     api = monnit_auth()
@@ -86,11 +87,13 @@ def get_monnit():
     return jsonify(readings)
 
 
-@app.route('/sensors/monnit/<sensor_id>/<from_date>/<to_date>', methods=['GET'])
-def get_monnit(sensor_id, from_date, to_date):
+@app.route('/sensors/monnit/<sensor_id>/<from_date>/<to_date>',
+           methods=['GET'])
+def get_monnit(sensor_id, from_date=None, to_date=None):
     api = monnit_auth()
-    readings = api.snapshots()
+    readings = api.sensor_data(sensor_id, from_date, to_date)
     return jsonify(readings)
+
 
 @app.route('/gateways/monnit', methods=['GET'])
 def get_monnit_gateways():
@@ -116,4 +119,4 @@ def get_bewhere():
 @app.route("/")
 def hello():
     return "<h1>Welome to Miranda Remote Monitoring Solution!<br>" \
-           "<br>Version 0.2.1<h1>"
+           "<br>Version 0.2.2 - July 4, 2019<h1>"
