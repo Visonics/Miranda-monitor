@@ -87,7 +87,8 @@ def get_monnit():
     return jsonify(readings)
 
 
-@app.route('/sensors/monnit/<sensor_id>/<from_date>/<to_date>',
+@app.route('/sensors/monnit/<sensor_id>')
+@app.route('/sensors/monnit/<sensor_id>&<from_date>&<to_date>',
            methods=['GET'])
 def get_monnit_sensor(sensor_id, from_date=None, to_date=None):
     api = monnit_auth()
