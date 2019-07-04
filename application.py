@@ -67,28 +67,48 @@ def sensor(sensor_id):
     return jsonify(readings)
 
 
-@app.route('/sensors/monnit', methods=['GET'])
-def get_monnit():
+def monnit_auth():
     api = Monnit("admin@mirandasolutionsgroup.com", "M0nn1tS3ns0rs")
     api.authentication()
+    return api
+
+
+def bewhere_auth():
+    api = Bewhere("bwadmin@mirandasolutionsgroup.com", "Stellula2018",
+                  "3y8uBuEOrS")
+    api.authentication()
+    return api
+
+@app.route('/sensors/monnit', methods=['GET'])
+def get_monnit():
+    api = monnit_auth()
     readings = api.snapshots()
     return jsonify(readings)
 
 
+@app.route('/sensors/monnit/<sensor_id>/<from_date>/<to_date>', methods=['GET'])
+def get_monnit(sensor_id, from_date, to_date):
+    api = monnit_auth()
+    readings = api.snapshots()
+    return jsonify(readings)
+
 @app.route('/gateways/monnit', methods=['GET'])
 def get_monnit_gateways():
-    api = Monnit("admin@mirandasolutionsgroup.com", "M0nn1tS3ns0rs")
-    api.authentication()
+    api = monnit_auth()
     readings = api.gateways()
+    return jsonify(readings)
+
+
+@app.route('/networks/monnit', methods=['GET'])
+def get_monnit_networks():
+    api = monnit_auth()
+    readings = api.networks()
     return jsonify(readings)
 
 
 @app.route('/sensors/bewhere', methods=['GET'])
 def get_bewhere():
-    api = Bewhere("bwadmin@mirandasolutionsgroup.com", "Stellula2018",
-                  "3y8uBuEOrS")
-
-    api.authentication()
+    bewhere_auth()
     readings = api.snapshots()
     return jsonify(readings)
 

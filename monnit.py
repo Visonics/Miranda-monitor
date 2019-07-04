@@ -1,6 +1,11 @@
 import requests
 import time
+from datetime import datetime, timedelta
 import json
+
+
+def date2str(date, date_format="%Y/%m/%d %H:%M:%S"):
+    return datetime.strftime(date, date_format)
 
 
 class Monnit:
@@ -39,10 +44,14 @@ class Monnit:
         print(json.dumps(data, indent=4))
         return data
 
-    def sensor_data(self, id):
+    def sensor_data(self, sensor_id, from_date=None, to_date=None):
+        if not to_date:
+            to_date = date2str(datetime.utcnow())
+            from_date = date2str(datetime.utcnow() - timedelta(days=7))
+
         poll_url = self.baseURL + "/SensorDataMessages/" + self.token + "?" +\
-                   "sensorID=" + str(id) + "&fromDate=2019/06/29 6:22:14 PM&" \
-                                           "toDate=2019/07/02 6:22:14PM"
+                   "sensorID=" + str(sensor_id) + "&fromDate=" + from_date + \
+                   "&toDate=" + to_date
         response = requests.get(poll_url)
         data = None
         print(response.status_code, response.reason)
