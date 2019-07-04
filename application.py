@@ -89,7 +89,7 @@ def get_monnit():
 
 @app.route('/sensors/monnit/<sensor_id>/<from_date>/<to_date>',
            methods=['GET'])
-def get_monnit(sensor_id, from_date=None, to_date=None):
+def get_monnit_sensor(sensor_id, from_date=None, to_date=None):
     api = monnit_auth()
     readings = api.sensor_data(sensor_id, from_date, to_date)
     return jsonify(readings)
@@ -111,7 +111,7 @@ def get_monnit_networks():
 
 @app.route('/sensors/bewhere', methods=['GET'])
 def get_bewhere():
-    bewhere_auth()
+    api = bewhere_auth()
     readings = api.snapshots()
     return jsonify(readings)
 
