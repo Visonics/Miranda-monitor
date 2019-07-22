@@ -87,6 +87,13 @@ def get_monnit():
     return jsonify(readings)
 
 
+@app.route('/sensors_extended/monnit', methods=['GET'])
+def get_monnit():
+    api = monnit_auth()
+    readings = api.snapshots_extended()
+    return jsonify(readings)
+
+
 @app.route('/sensors/monnit/<sensor_id>')
 @app.route('/sensors/monnit/<sensor_id>&<from_date>&<to_date>',
            methods=['GET'])
@@ -110,6 +117,29 @@ def get_monnit_networks():
     return jsonify(readings)
 
 
+@app.route('/users/monnit', methods=['GET'])
+def get_monnit_users():
+    api = monnit_auth()
+    readings = api.users()
+    return jsonify(readings)
+
+
+@app.route('/groups/monnit', methods=['GET'])
+def get_monnit_groups():
+    api = monnit_auth()
+    readings = api.groups()
+    return jsonify(readings)
+
+
+@app.route('/notifications/monnit', methods=['GET'])
+@app.route('/notifications/monnit/<from_date>&<to_date>',
+           methods=['GET'])
+def get_monnit_groups(from_date=None, to_date=None):
+    api = monnit_auth()
+    readings = api.notifications(from_date, to_date)
+    return jsonify(readings)
+
+
 @app.route('/sensors/bewhere', methods=['GET'])
 def get_bewhere():
     api = bewhere_auth()
@@ -117,7 +147,29 @@ def get_bewhere():
     return jsonify(readings)
 
 
+@app.route('/sensors/bewhere/<sensor_id>')
+@app.route('/sensors/bewhere/<sensor_id>&<from_date>&<to_date>',
+           methods=['GET'])
+def get_bewhere_sensor(sensor_id, from_date=None, to_date=None):
+    api = bewhere_auth()
+    readings = api.snapshots_id(sensor_id, from_date, to_date)
+    return jsonify(readings)
+
+
+@app.route('/users/bewhere', methods=['GET'])
+def get_bewhere_users():
+    api = bewhere_auth()
+    readings = api.users()
+    return jsonify(readings)
+
+
+@app.route('/groups/bewhere', methods=['GET'])
+def get_bewhere_groups():
+    api = bewhere_auth()
+    readings = api.groups()
+    return jsonify(readings)
+
 @app.route("/")
 def hello():
     return "<h1>Welome to Miranda Remote Monitoring Solution!<br>" \
-           "<br>Version 0.2.2 - July 4, 2019<h1>"
+           "<br>Version 0.2.3 - July 22, 2019<h1>"

@@ -2,10 +2,7 @@ import requests
 import time
 from datetime import datetime, timedelta
 import json
-
-
-def date2str(date, date_format="%Y/%m/%d %H:%M:%S"):
-    return datetime.strftime(date, date_format)
+from utils import date2str
 
 
 class Monnit:
@@ -44,6 +41,14 @@ class Monnit:
         print(json.dumps(data, indent=4))
         return data
 
+    def snapshots_extended(self):
+        poll_url = self.baseURL + "/SensorListExtended/" + self.token
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
+
     def sensor_data(self, sensor_id, from_date=None, to_date=None):
         if not to_date:
             to_date = date2str(datetime.utcnow())
@@ -58,6 +63,35 @@ class Monnit:
         if response.status_code == 200:
             data = response.json().get("Result")
             print(json.dumps(data, indent=4))
+        return data
+
+    def users(self):
+        poll_url = self.baseURL + "/AccountUserList/" + self.token
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
+
+    def groups(self):
+        poll_url = self.baseURL + "/SensorGroupList/" + self.token
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
+
+    def notifications(self, from_date=None, to_date=None):
+        if not to_date:
+            to_date = date2str(datetime.utcnow())
+            from_date = date2str(datetime.utcnow() - timedelta(days=7))
+        poll_url = self.baseURL + "/SentNotifications/" + self.token + \
+                   "?from=" + from_date + "&to=" + to_date
+        print(poll_url)
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(len(data), json.dumps(data, indent=4))
         return data
 
     def networks(self):
@@ -76,14 +110,14 @@ class Monnit:
         print(json.dumps(data, indent=4))
         return data
 
-    def beacons(self):
-        poll_url = self.baseURL + "/accounts/" + self.accountKey + "/beacons"
-        response = requests.get(poll_url, headers=self.headers)
+    def sub_accounts(self):
+        poll_url = self.baseURL + "/SubAccountList/" + self.token
+        response = requests.get(poll_url)
 
-        print(response.text)
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
 
-    def beacon(self, deviceId):
-        print("beacon: %s" % deviceId)
 
     def setConfig(self, deviceId):
         postUrl = self.baseURL + "/accounts/" + self.accountKey + \
@@ -171,6 +205,10 @@ if __name__ == '__main__':
     data = api.snapshots()
     print(len(data))
 
-    api.networks()
-    api.gateways()
-    api.sensor_data(488187)
+    #api.networks()
+    #api.gateways()
+    #api.sensor_data(488187)
+    #api.users()
+    #api.groups()
+    api.notifications()
+    api.sub_accounts()

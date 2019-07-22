@@ -2,6 +2,7 @@ import hashlib
 import requests
 import time
 import json
+from utils import date2str, str2date
 
 
 class Bewhere:
@@ -67,8 +68,33 @@ class Bewhere:
             # print(response.text)
             print(json.dumps(response.json(), indent=4))
 
+    def accounts(self):
+        poll_url = self.baseURL + "/accounts/"
+        response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
+
     def snapshots(self):
         poll_url = self.baseURL + "/accounts/" + self.accountKey + "/snapshots"
+        response = requests.get(poll_url, headers=self.headers)
+
+        # print(response.text)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
+
+    def snapshots_id(self, id, from_date=None, to_date=None):
+        if not to_date:
+            to_date = time.time() * 1000
+            from_date = (time.time() - 60 * 60 * 24 * 7) * 1000  # 7 days
+
+        query = "?start=%d&end=%d" % (from_date, to_date)
+
+        poll_url = self.baseURL + "/accounts/" + self.accountKey + \
+                   "/streams/" + id + query
+
+        print("Request:  %s" % poll_url)
         response = requests.get(poll_url, headers=self.headers)
 
         # print(response.text)
@@ -79,8 +105,30 @@ class Bewhere:
     def beacons(self):
         poll_url = self.baseURL + "/accounts/" + self.accountKey + "/beacons"
         response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
 
-        print(response.text)
+    def users(self):
+        poll_url = self.baseURL + "/accounts/" + self.accountKey + "/users"
+        response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
+
+    def groups(self):
+        poll_url = self.baseURL + "/accounts/" + self.accountKey + "/groups"
+        response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
+
+    def modems(self):
+        poll_url = self.baseURL + "/accounts/" + self.accountKey + "/modems"
+        response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
 
     def beacon(self, deviceId):
         print("beacon: %s" % deviceId)
@@ -142,7 +190,7 @@ class Bewhere:
         self.maxDate = watermark
 
         if self.maxDate == 0:
-            self.maxDate = (time.time() - 60 * 5) * 1000
+            self.maxDate = (time.time() - 60 * 60 * 24) * 1000
 
         query = "&start=%d&end=%d" % (self.maxDate, time.time() * 1000)
         url = self.baseURL + "/accounts/" + self.accountKey + \
@@ -153,8 +201,9 @@ class Bewhere:
         historyData = requests.get(url, headers=self.headers)
         # print historyData.text
         data = historyData.json()
-
-        self.maxDate = long(data["maxDate"])
+        print(json.dumps(data, indent=4))
+        self.maxDate = int(data["maxDate"])
+        return data
 
     def getBeaconFota(self, deviceId):
         url = self.baseURL + "/accounts/" + self.accountKey + "/fota/%s" % deviceId
@@ -171,10 +220,32 @@ if __name__ == '__main__':
                   "3y8uBuEOrS")
 
     api.authentication()
-    data = api.snapshots()
-    print(len(data))
-    # api.beacon("357591080419283")
-    # api.beacons()
+    data = api.accounts()
+    print("Accounts =", len(data))
 
-    # api.pollHistory(1530736802332)
+    data = api.snapshots()
+    print("Sensors =", len(data))
+    # api.beacon("357591080419283")
+
+    data = api.beacons()
+    print("Beacons =", len(data))
+
+    data = api.users()
+    print("Users =", len(data))
+
+    data = api.groups()
+    print("groups =", len(data))
+
+
+    data = api.modems()
+    print("modems =", len(data))
+
+    data = api.snapshots_id("357591080231795")
+    print("snaps =", len(data))
+
+    #data = api.pollHistory(0)
+    #data = api.pollHistory(1530736802332)
+    #print("history =", len(data['stream']))
+
+    print(time.time())
     # api.configuration("357591080419283")
