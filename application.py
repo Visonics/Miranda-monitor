@@ -88,7 +88,7 @@ def get_monnit():
 
 
 @app.route('/sensors_extended/monnit', methods=['GET'])
-def get_monnit():
+def get_monnit_extended():
     api = monnit_auth()
     readings = api.snapshots_extended()
     return jsonify(readings)
@@ -134,7 +134,7 @@ def get_monnit_groups():
 @app.route('/notifications/monnit', methods=['GET'])
 @app.route('/notifications/monnit/<from_date>&<to_date>',
            methods=['GET'])
-def get_monnit_groups(from_date=None, to_date=None):
+def get_monnit_notifications(from_date=None, to_date=None):
     api = monnit_auth()
     readings = api.notifications(from_date, to_date)
     return jsonify(readings)
@@ -169,7 +169,13 @@ def get_bewhere_groups():
     readings = api.groups()
     return jsonify(readings)
 
+
 @app.route("/")
 def hello():
     return "<h1>Welome to Miranda Remote Monitoring Solution!<br>" \
            "<br>Version 0.2.3 - July 22, 2019<h1>"
+
+
+if __name__ == '__main__':
+    print("Starting service")
+    app.run(host='0.0.0.0', port=8081, threaded=True)
