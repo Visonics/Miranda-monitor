@@ -109,6 +109,20 @@ class Bewhere:
         print(json.dumps(data, indent=4))
         return data
 
+    def notifications(self, from_date=None, to_date=None):
+        if not to_date:
+            to_date = time.time() * 1000
+            from_date = (time.time() - 60 * 60 * 24 * 90) * 1000  # 7 days
+
+        query = "?start=%d&end=%d" % (from_date, to_date)
+        poll_url = self.baseURL + "/accounts/" + self.accountKey \
+                   + "/events" + query
+        print (poll_url)
+        response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
+
     def users(self):
         poll_url = self.baseURL + "/accounts/" + self.accountKey + "/users"
         response = requests.get(poll_url, headers=self.headers)
@@ -125,6 +139,20 @@ class Bewhere:
 
     def modems(self):
         poll_url = self.baseURL + "/accounts/" + self.accountKey + "/modems"
+        response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
+
+    def transmitters(self):
+        poll_url = self.baseURL + "/accounts/" + self.accountKey + "/transmitters"
+        response = requests.get(poll_url, headers=self.headers)
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        return data
+
+    def sites(self):
+        poll_url = self.baseURL + "/accounts/" + self.accountKey + "/sites"
         response = requests.get(poll_url, headers=self.headers)
         data = response.json()
         print(json.dumps(data, indent=4))
@@ -220,8 +248,7 @@ if __name__ == '__main__':
                   "3y8uBuEOrS")
 
     api.authentication()
-    data = api.accounts()
-    print("Accounts =", len(data))
+
 
     data = api.snapshots()
     print("Sensors =", len(data))
@@ -240,12 +267,22 @@ if __name__ == '__main__':
     data = api.modems()
     print("modems =", len(data))
 
-    data = api.snapshots_id("357591080231795")
-    print("snaps =", len(data))
+    data = api.transmitters()
+    print("transm =", len(data))
+    data = api.sites()
+    print("sites =", len(data))
+    data = api.accounts()
+    print("Accounts =", len(data))
+
+    data = api.notifications()
+    print("Events =", len(data))
+
+    #data = api.snapshots_id("357591080231795")
+    #print("snaps =", len(data))
 
     #data = api.pollHistory(0)
     #data = api.pollHistory(1530736802332)
     #print("history =", len(data['stream']))
 
-    print(time.time())
+    print(time.time() * 1000)
     # api.configuration("357591080419283")
