@@ -65,6 +65,18 @@ class Monnit:
             print(json.dumps(data, indent=4))
         return data
 
+    def sensor_metadata(self, sensor_id, digit):
+
+        poll_url = self.baseURL + "/SensorLookUp/" + self.token + "?" +\
+                   "sensorID=" + str(sensor_id) + "&CheckDigit=" + digit
+        response = requests.get(poll_url)
+        data = None
+        print(response.status_code, response.reason)
+        if response.status_code == 200:
+            data = response.json().get("Result")
+            print(json.dumps(data, indent=4))
+        return data
+
     def users(self):
         poll_url = self.baseURL + "/AccountUserList/" + self.token
         response = requests.get(poll_url)
@@ -94,6 +106,16 @@ class Monnit:
         print(len(data), json.dumps(data, indent=4))
         return data
 
+    def all_notifications(self):
+
+        poll_url = self.baseURL + "/AccountNotificationList/" + self.token
+        print(poll_url)
+        response = requests.get(poll_url)
+
+        data = response.json().get("Result")
+        print(len(data), json.dumps(data, indent=4))
+        return data
+
     def networks(self):
         poll_url = self.baseURL + "/NetworkList/" + self.token
         response = requests.get(poll_url)
@@ -110,6 +132,18 @@ class Monnit:
         print(json.dumps(data, indent=4))
         return data
 
+    def gateway_metadata(self, gateway_id, digit):
+
+        poll_url = self.baseURL + "/GatewayLookUp/" + self.token + "?" +\
+                   "gatewayID=" + str(gateway_id) + "&CheckDigit=" + digit
+        response = requests.get(poll_url)
+        data = None
+        print(response.status_code, response.reason)
+        if response.status_code == 200:
+            data = response.json().get("Result")
+            print(json.dumps(data, indent=4))
+        return data
+
     def sub_accounts(self):
         poll_url = self.baseURL + "/SubAccountList/" + self.token
         response = requests.get(poll_url)
@@ -118,97 +152,32 @@ class Monnit:
         print(json.dumps(data, indent=4))
         return data
 
+    def accounts(self, account_id=None):
+        query = ""
+        if account_id:
+            query = "?accountID=%d" % account_id
+        poll_url = self.baseURL + "/AccountGet/" + self.token + query
+        response = requests.get(poll_url)
 
-    def setConfig(self, deviceId):
-        postUrl = self.baseURL + "/accounts/" + self.accountKey + \
-                  "/beacons/configuration/" + deviceId
-        # print postUrl
-
-        # timer config
-        """
-        data = {"deviceMode":1,
-            "workingMode":0,
-            "sensor":0,
-            "interval":300,
-            "interruptConfig":{"inner":0,"outter":0,"actThresh":0,"actTime":0,
-            "inactThresh":0,"inactTime":0}}
-        """
-
-        """
-        #motion sample
-        data = {"deviceMode":1,
-            "workingMode":1,
-            "sensor":1,
-            "interval":60,
-            "interruptConfig":{"inner":3,"outter":360,"actThresh":150,
-            "actTime":10,"inactThresh":150,"inactTime":10}}
-    
-        #motion start/stop sample
-        data = {"deviceMode":1,
-            "workingMode":3,
-            "sensor":1,
-            "interval":60,
-            "interruptConfig":{"inner":3,"outter":72,"actThresh":300,"actTime":32,"inactThresh":256,"inactTime":64}}
-    
-        """
-
-        # motion sample
-        data = {"deviceMode": 1,
-                "workingMode": 1,
-                "sensor": 1,
-                "interval": 120,
-                "interruptConfig": {"inner": 3, "outter": 90, "actThresh": 150,
-                                    "actTime": 16, "inactThresh": 128,
-                                    "inactTime": 32}}
-
-        response = requests.post(postUrl, json=data, headers=self.headers)
-        print(response.text)
-
-    def getConfig(self, deviceId):
-        # postUrl = "https://api.bewhere.com/accounts/OAgpNv7FNE/beacons/configuration/357591080070896"
-        postUrl = self.baseURL + "/accounts/" + self.accountKey + \
-                  "/beacons/configuration/" + deviceId
-        print(postUrl)
-        response = requests.get(postUrl, headers=self.headers)
-        print(response.json())
-
-    def pollHistory(self, watermark):
-        self.maxDate = watermark
-
-        if self.maxDate == 0:
-            self.maxDate = (time.time() - 60 * 5) * 1000
-
-        query = "&start=%d&end=%d" % (self.maxDate, time.time() * 1000)
-        url = self.baseURL + "/accounts/" + self.accountKey + \
-            "/streams/history?limit=100%s" % query
-        print("Request:  %s" % url)
-        # logger.log("Request:  %s" % url)
-
-        historyData = requests.get(url, headers=self.headers)
-        # print historyData.text
-        data = historyData.json()
-
-        self.maxDate = long(data["maxDate"])
-
-    def getBeaconFota(self, deviceId):
-        url = self.baseURL + "/accounts/" + self.accountKey + "/fota/%s" % deviceId
-        print("Request:  %s" % url)
-
-        response = requests.get(url, headers=self.headers)
-        print(response.json())
-
+        data = response.json().get("Result")
+        print(json.dumps(data, indent=4))
+        return data
 
 # client
 if __name__ == '__main__':
     api = Monnit("admin@mirandasolutionsgroup.com", "M0nn1tS3ns0rs")
     api.authentication()
-    data = api.snapshots()
-    print(len(data))
+    #data = api.snapshots()
+    #print(len(data))
 
     #api.networks()
     #api.gateways()
     #api.sensor_data(488187)
     #api.users()
-    #api.groups()
-    api.notifications()
+    #
+    api.all_notifications()
     api.sub_accounts()
+    # api.appids()
+    api.sensor_metadata(488187, "SMQM")
+    api.gateway_metadata(941178, "XORT")
+    api.accounts(26489)

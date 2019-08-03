@@ -80,8 +80,29 @@ def bewhere_auth():
     return api
 
 
+@app.route('/appid/monnit', methods=['GET'])
+def get_monnit_appids():
+    api = monnit_auth()
+    readings = api.appids()
+    return jsonify(readings)
+
+
+@app.route('/sensor_metadata/monnit/<sensor_id>/<check_digit>', methods=['GET'])
+def get_monnit_sensor_metadata(sensor_id, check_digit):
+    api = monnit_auth()
+    readings = api.sensor_metadata(sensor_id, check_digit)
+    return jsonify(readings)
+
+
+@app.route('/gateway_metadata/monnit/<sensor_id>/<check_digit>', methods=['GET'])
+def get_monnit_gateway_metadata(sensor_id, check_digit):
+    api = monnit_auth()
+    readings = api.gateway_metadata(sensor_id, check_digit)
+    return jsonify(readings)
+
+
 @app.route('/sensors/monnit', methods=['GET'])
-def get_monnit():
+def get_monnit_snapshots():
     api = monnit_auth()
     readings = api.snapshots()
     return jsonify(readings)
@@ -103,6 +124,27 @@ def get_monnit_sensor(sensor_id, from_date=None, to_date=None):
     return jsonify(readings)
 
 
+@app.route('/users/monnit', methods=['GET'])
+def get_monnit_users():
+    api = monnit_auth()
+    readings = api.users()
+    return jsonify(readings)
+
+
+@app.route('/account_info/monnit/<account_id>', methods=['GET'])
+def get_monnit_account_info(account_id=None):
+    api = monnit_auth()
+    readings = api.accounts(account_id)
+    return jsonify(readings)
+
+
+@app.route('/accounts/monnit', methods=['GET'])
+def get_monnit_accounts():
+    api = monnit_auth()
+    readings = api.sub_accounts()
+    return jsonify(readings)
+
+
 @app.route('/gateways/monnit', methods=['GET'])
 def get_monnit_gateways():
     api = monnit_auth()
@@ -114,13 +156,6 @@ def get_monnit_gateways():
 def get_monnit_networks():
     api = monnit_auth()
     readings = api.networks()
-    return jsonify(readings)
-
-
-@app.route('/users/monnit', methods=['GET'])
-def get_monnit_users():
-    api = monnit_auth()
-    readings = api.users()
     return jsonify(readings)
 
 
@@ -140,6 +175,9 @@ def get_monnit_notifications(from_date=None, to_date=None):
     return jsonify(readings)
 
 
+"""Bewhere API"""
+
+
 @app.route('/sensors/bewhere', methods=['GET'])
 def get_bewhere():
     api = bewhere_auth()
@@ -156,6 +194,20 @@ def get_bewhere_sensor(sensor_id, from_date=None, to_date=None):
     return jsonify(readings)
 
 
+@app.route('/beacons/bewhere', methods=['GET'])
+def get_bewhere_beacons():
+    api = bewhere_auth()
+    readings = api.beacons()
+    return jsonify(readings)
+
+
+@app.route('/accounts/bewhere', methods=['GET'])
+def get_bewhere_accounts():
+    api = bewhere_auth()
+    readings = api.accounts()
+    return jsonify(readings)
+
+
 @app.route('/users/bewhere', methods=['GET'])
 def get_bewhere_users():
     api = bewhere_auth()
@@ -169,6 +221,35 @@ def get_bewhere_groups():
     readings = api.groups()
     return jsonify(readings)
 
+
+@app.route('/modems/bewhere', methods=['GET'])
+def get_bewhere_modems():
+    api = bewhere_auth()
+    readings = api.modems()
+    return jsonify(readings)
+
+
+@app.route('/sites/bewhere', methods=['GET'])
+def get_bewhere_sites():
+    api = bewhere_auth()
+    readings = api.sites()
+    return jsonify(readings)
+
+
+@app.route('/transmitters/bewhere', methods=['GET'])
+def get_bewhere_transmitters():
+    api = bewhere_auth()
+    readings = api.transmitters()
+    return jsonify(readings)
+
+
+@app.route('/notifications/bewhere', methods=['GET'])
+@app.route('/notifications/bewhere/<from_date>&<to_date>',
+           methods=['GET'])
+def get_bewhere_notifications(from_date=None, to_date=None):
+    api = bewhere_auth()
+    readings = api.notifications(from_date, to_date)
+    return jsonify(readings)
 
 @app.route("/")
 def hello():
